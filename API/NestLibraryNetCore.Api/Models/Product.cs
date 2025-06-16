@@ -1,4 +1,5 @@
 ﻿using Nest;
+using NestLibraryNetCore.Api.DTOs;
 
 namespace NestLibraryNetCore.Api.Models
 {
@@ -11,6 +12,16 @@ namespace NestLibraryNetCore.Api.Models
         public int Stock { get; set; }
         public DateTime Created { get; set; }
         public DateTime Updated { get; set; }
-        public ProductFeature? Feature { get; set; } 
+        public ProductFeature? Feature { get; set; }
+
+
+        public ProductDto CreateDto()
+        {
+            if (Feature == null)
+            {
+                return new ProductDto( Id,Name,Price,Stock,null);
+            }
+            return new ProductDto(Id, Name, Price, Stock, new ProductFeatureDto( Feature.Width,Feature.Height,Feature.Color));
+        }
     }
 }
