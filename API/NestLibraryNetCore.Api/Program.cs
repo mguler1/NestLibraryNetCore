@@ -1,5 +1,7 @@
 
 using NestLibraryNetCore.Api.Extensions;
+using NestLibraryNetCore.Api.Repository;
+using NestLibraryNetCore.Api.Services;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddElasticSearch(builder.Configuration);
+builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<ProductRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

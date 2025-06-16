@@ -17,7 +17,6 @@ namespace NestLibraryNetCore.Api.Services
         {
             var product = new Product()
             {
-                Created = DateTime.Now,
                 Name = request.Name,
                 Price = request.Price,
                 Stock = request.Stock,
