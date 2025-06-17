@@ -1,13 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using NestLibraryNetCore.Api.DTOs;
 using NestLibraryNetCore.Api.Services;
 
 namespace NestLibraryNetCore.Api.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ProductsController : ControllerBase
+
+    public class ProductsController : BaseController
     {
         private readonly ProductService _productService;
 
@@ -16,9 +14,16 @@ namespace NestLibraryNetCore.Api.Controllers
             _productService = productService;
         }
         [HttpPost]
-        public async Task <IActionResult> Save (ProductCreateDto request)
+        public async Task<IActionResult> Save(ProductCreateDto request)
         {
-            return Ok(await _productService.SaveAsync(request));
+            return CreateActionResult(await _productService.SaveAsync(request));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await _productService.GetAllAsync();
+            return CreateActionResult(await _productService.GetAllAsync());
         }
     }
 }

@@ -1,6 +1,8 @@
-﻿using NestLibraryNetCore.Api.DTOs;
+﻿using Nest;
+using NestLibraryNetCore.Api.DTOs;
 using NestLibraryNetCore.Api.Models;
 using NestLibraryNetCore.Api.Repository;
+using System.Collections.Immutable;
 using System.Net;
 
 namespace NestLibraryNetCore.Api.Services
@@ -34,6 +36,24 @@ namespace NestLibraryNetCore.Api.Services
             }
             return ResponseDto<ProductDto>.Success(response.CreateDto(),HttpStatusCode.Created);
 
+        }
+        public async  Task<ResponseDto<List<ProductDto>>> GetAllAsync()
+        {
+           var products = await _productRepository.GetAllAsync();
+            var productListDto=new List<ProductDto>();
+
+            foreach (var product in products)
+            {
+                if (product.Feature == null)
+                {
+                    productListDto.Add(new ProductDto(product.Id, product.Name, product.Price, product.Stock, null));
+                }
+                else
+                {
+                    productListDto.Add(new ProductDto(product.Id, product.Name, product.Price, product.Stock, new ProductFeatureDto(product.Feature.Width, product.Feature.Height, product.Feature.Color)));
+                }
+            }
+            return ResponseDto<List<ProductDto>>.Success(productListDto, HttpStatusCode.OK);
         }
     }
 }
