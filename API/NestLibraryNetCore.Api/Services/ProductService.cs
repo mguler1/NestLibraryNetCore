@@ -32,15 +32,15 @@ namespace NestLibraryNetCore.Api.Services
             var response = await _productRepository.SaveAsync(product);
             if (response == null)
             {
-                return ResponseDto<ProductDto>.Fail(new List<string> {"Error"},HttpStatusCode.InternalServerError);
+                return ResponseDto<ProductDto>.Fail(new List<string> { "Error" }, HttpStatusCode.InternalServerError);
             }
-            return ResponseDto<ProductDto>.Success(response.CreateDto(),HttpStatusCode.Created);
+            return ResponseDto<ProductDto>.Success(response.CreateDto(), HttpStatusCode.Created);
 
         }
-        public async  Task<ResponseDto<List<ProductDto>>> GetAllAsync()
+        public async Task<ResponseDto<List<ProductDto>>> GetAllAsync()
         {
-           var products = await _productRepository.GetAllAsync();
-            var productListDto=new List<ProductDto>();
+            var products = await _productRepository.GetAllAsync();
+            var productListDto = new List<ProductDto>();
 
             foreach (var product in products)
             {
@@ -54,6 +54,36 @@ namespace NestLibraryNetCore.Api.Services
                 }
             }
             return ResponseDto<List<ProductDto>>.Success(productListDto, HttpStatusCode.OK);
+        }
+
+        public async Task<ResponseDto<ProductDto>> GetByIdAsync(string id)
+        {
+            var product = await _productRepository.GetById(id);
+            if (product == null)
+            {
+                return ResponseDto<ProductDto>.Fail(new List<string> { "Product not found" }, HttpStatusCode.NotFound);
+            }
+            return ResponseDto<ProductDto>.Success(product.CreateDto(), HttpStatusCode.OK);
+        }
+
+        public async Task<ResponseDto<bool>> UpdateAsync(ProductUpdateDto productUpdateDto)
+        {
+            var isSuccess = await _productRepository.UpdateAsync(productUpdateDto);
+            if (!isSuccess)
+            {
+                return ResponseDto<bool>.Fail(new List<string> { "Product not found" }, HttpStatusCode.InternalServerError);
+            }
+            return ResponseDto<bool>.Success(true, HttpStatusCode.NoContent);
+        }
+
+        public async Task<ResponseDto<bool>> DeleteAsync(string id)
+        {
+            var response = await _productRepository.DeleteAsync(id);
+            if (!response)
+            {
+                return ResponseDto<bool>.Fail(new List<string> { "Error deleting product" }, HttpStatusCode.InternalServerError);
+            }
+            return ResponseDto<bool>.Success(true, HttpStatusCode.NoContent);
         }
     }
 }

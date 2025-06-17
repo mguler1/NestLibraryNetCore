@@ -25,5 +25,27 @@ namespace NestLibraryNetCore.Api.Controllers
             var result = await _productService.GetAllAsync();
             return CreateActionResult(await _productService.GetAllAsync());
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(string id)
+        {
+            var result = await _productService.GetByIdAsync(id);
+            if (result.Data == null)
+            {
+                return NotFound();
+            }
+            return CreateActionResult(result);
+        }
+        [HttpPut]
+        public async Task<IActionResult> Update(ProductUpdateDto productUpdateDto)
+        {
+            return CreateActionResult(await _productService.UpdateAsync(productUpdateDto));
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            return CreateActionResult(await _productService.DeleteAsync(id));
+        }
     }
 }
