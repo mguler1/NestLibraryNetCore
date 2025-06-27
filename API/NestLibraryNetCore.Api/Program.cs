@@ -13,6 +13,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddElasticSearch(builder.Configuration);
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<ProductRepository>();
+builder.Services.AddScoped<ECommerceRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
