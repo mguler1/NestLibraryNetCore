@@ -61,7 +61,7 @@ namespace NestLibraryNetCore.Api.Repository
             return result.Documents.ToImmutableList();
         }
 
-        public async Task<IImmutableList<ECommerce>> Range(double fromPrice,double toPrice)
+        public async Task<IImmutableList<ECommerce>> Range(double fromPrice, double toPrice)
         {
             var result = await _client.SearchAsync<ECommerce>(s => s
                 .Index(IndexName)
@@ -70,8 +70,55 @@ namespace NestLibraryNetCore.Api.Repository
                     .GreaterThanOrEquals(fromPrice)
                     .LessThanOrEquals(toPrice))));
             foreach (var hit in result.Hits)
+                hit.Source.Id = hit.Id;
+            return result.Documents.ToImmutableList();
+        }
+
+        public async Task<IImmutableList<ECommerce>> MatchAll()
+        {
+            var result = await _client.SearchAsync<ECommerce>(s => s
+                .Index(IndexName)
+                .Query(q => q.MatchAll()));
+            foreach (var hit in result.Hits)
+                hit.Source.Id = hit.Id; 
+            return result.Documents.ToImmutableList();
+        }
+
+        public async Task<IImmutableList<ECommerce>> PaginationMatchAll(int page,int pageSize)
+        {
+            var pageFrom=(page-1)*pageSize;
+            var result = await _client.SearchAsync<ECommerce>(s => s
+                .Index(IndexName).Size(pageSize).From(pageFrom)
+                .Query(q => q.MatchAll()));
+            foreach (var hit in result.Hits)
+                hit.Source.Id = hit.Id;
+            return result.Documents.ToImmutableList();
+        }
+
+        public async Task<IImmutableList<ECommerce>> WildCardQuery(string customerFullName)
+        {
+            var result = await _client.SearchAsync<ECommerce>(s => s
+                .Index(IndexName)
+                .Query(q => q.Wildcard(q =>q.Field(f => f.CustomerFullName.Suffix("keyword"))
+                    .Wildcard(customerFullName))));
+
+            foreach (var hit in result.Hits)
+                hit.Source.Id = hit.Id; // Assign the Id from the hit to the source object
+            return result.Documents.ToImmutableList();
+        }
+
+        public async Task<IImmutableList<ECommerce>> FuzzyQuery(string customerFullName)
+        {
+            var result = await _client.SearchAsync<ECommerce>(s => s
+                .Index(IndexName)
+                .Query(q => q.Fuzzy(fu => fu
+                    .Field(f => f.CustomerFullName.Suffix("keyword"))
+                    .Value(customerFullName))));
+                   
+            foreach (var hit in result.Hits)
                 hit.Source.Id = hit.Id; // Assign the Id from the hit to the source object
             return result.Documents.ToImmutableList();
         }
     }
+
 }

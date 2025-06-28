@@ -45,12 +45,31 @@ namespace NestLibraryNetCore.Api.Controllers
             var result = await _repository.Range(fromPrice, toPrice);   
             return Ok(result);
         }
-
-            //[HttpGet]
-            //public async Task<IActionResult> FuzzyQuery(string customerFullName)
-            //{
-            //    var result = await _repository.FuzzyQuery(customerFullName);
-            //    return Ok(result);
-            //}
+        [HttpGet]
+        public async Task<IActionResult> MatchAll()
+        {
+            var result = await _repository.MatchAll();
+            return Ok(result);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> PaginationMatchAll(int page,int pageSize)
+        {
+            var result = await _repository.PaginationMatchAll(page,pageSize);
+            return Ok(result);
+        }
+        [HttpGet]
+        public async Task<IActionResult> WildCardQuery(string customerFullName)
+        {
+            var result = await _repository.WildCardQuery(customerFullName);
+            return Ok(result);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> FuzzyQuery(string customerFullName)
+        {
+            var result = await _repository.FuzzyQuery(customerFullName);
+            return Ok(result);
+        }
+    }
 }
