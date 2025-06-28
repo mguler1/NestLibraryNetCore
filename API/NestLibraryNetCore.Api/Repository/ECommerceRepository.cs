@@ -103,7 +103,7 @@ namespace NestLibraryNetCore.Api.Repository
                     .Wildcard(customerFullName))));
 
             foreach (var hit in result.Hits)
-                hit.Source.Id = hit.Id; // Assign the Id from the hit to the source object
+                hit.Source.Id = hit.Id;
             return result.Documents.ToImmutableList();
         }
 
@@ -116,9 +116,45 @@ namespace NestLibraryNetCore.Api.Repository
                     .Value(customerFullName))));
                    
             foreach (var hit in result.Hits)
-                hit.Source.Id = hit.Id; // Assign the Id from the hit to the source object
+                hit.Source.Id = hit.Id;
             return result.Documents.ToImmutableList();
         }
+
+        public async Task<IImmutableList<ECommerce>> MatchQueryFullText(string categoryName)
+        {
+            var result = await _client.SearchAsync<ECommerce>(s => s
+                .Index(IndexName)
+                .Query(q => q.Match(m => m
+                    .Field(f => f.Category)
+                    .Query(categoryName))));
+            foreach (var hit in result.Hits)
+                hit.Source.Id = hit.Id;
+            return result.Documents.ToImmutableList();
+        }
+        public async Task<IImmutableList<ECommerce>> MatchBoolPrefixQueryFullText(string customerFullName)
+        {
+            var result = await _client.SearchAsync<ECommerce>(s => s
+                .Index(IndexName)
+                .Query(q => q.MatchBoolPrefix(m => m
+                    .Field(f => f.CustomerFullName)
+                    .Query(customerFullName))));
+            foreach (var hit in result.Hits)
+                hit.Source.Id = hit.Id;
+            return result.Documents.ToImmutableList();
+        }
+
+        public async Task<IImmutableList<ECommerce>> CompoundQueryExample(string cityName)
+        {
+            var result = await _client.SearchAsync<ECommerce>(s => s
+                .Index(IndexName)
+                .Query(q => q.Bool(b => b
+                    .Must(m => m.Term(t => t.Field("geoip_city.name").Value(cityName))))));
+                   
+            foreach (var hit in result.Hits)
+                hit.Source.Id = hit.Id;
+            return result.Documents.ToImmutableList();
+        }
+
     }
 
 }

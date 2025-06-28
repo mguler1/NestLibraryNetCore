@@ -71,5 +71,20 @@ namespace NestLibraryNetCore.Api.Controllers
             var result = await _repository.FuzzyQuery(customerFullName);
             return Ok(result);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> MatchQueryFullText(string categoryName)
+        {
+            var result = await _repository.MatchQueryFullText(categoryName);
+            return Ok(result);
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> MatchBoolPrefixQueryFullText(string customerFullName)
+        {
+            var result = await _repository.MatchBoolPrefixQueryFullText(customerFullName);
+            return Ok(result);
+        }
     }
 }
